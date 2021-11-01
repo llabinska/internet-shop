@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-
     @ExceptionHandler({UserNotFoundException.class})
     public ResponseEntity<GeneralErrorDto> handleUserNotFoundException(
             UserNotFoundException ex) {
@@ -46,7 +45,4 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-    private String getFieldError(FieldError fieldError) {
-        return fieldError.getField() + ": " + fieldError.getDefaultMessage();
-    }
 }
