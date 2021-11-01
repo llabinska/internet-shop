@@ -10,6 +10,6 @@ public class AccountRequestDto {
 
     @NotNull(message = "{amount.not.null}")
     @Range(min = 1, message = "{amount.size.zero}")
-    private Long amount;
+    private long amount;
 
 }
