@@ -7,6 +7,6 @@ public class AccountResponseDto {
 
     private long id;
 
-    private long amount;
+    private double amount;
 
 }

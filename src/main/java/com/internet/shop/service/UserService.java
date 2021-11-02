@@ -23,7 +23,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-
     @Transactional
     public UserResponseDto create(UserRequestDto userRequestDto) {
         User user = new User();

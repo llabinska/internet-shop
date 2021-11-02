@@ -15,7 +15,7 @@ public class Account {
     private long id;
 
     @Column(nullable = false)
-    private long amount;
+    private double amount;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
