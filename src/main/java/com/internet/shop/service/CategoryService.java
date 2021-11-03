@@ -42,7 +42,7 @@ public class CategoryService {
 
     @Transactional
     public CategoryResponseDto update(Long id, CategoryRequestDto categoryRequestDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(CATEGORY_NOT_FOUND_ID_MSG, id)));
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND_ID_MSG, id)));
 
         String name = categoryRequestDto.getName();
         Category categoryByName = categoryRepository.getByName(name);
