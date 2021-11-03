@@ -1,10 +1,7 @@
 package com.internet.shop.controller;
 
 import com.internet.shop.dto.error.GeneralErrorDto;
-import com.internet.shop.exception.CategoryAlreadyExistsException;
-import com.internet.shop.exception.CategoryNotFoundException;
-import com.internet.shop.exception.ProductNotFoundException;
-import com.internet.shop.exception.UserNotFoundException;
+import com.internet.shop.exception.*;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +27,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 new GeneralErrorDto("Not found", Collections.singletonList(ex.getMessage()));
         return new ResponseEntity<>(
                 apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({UserAlreadyExistsException.class})
+    public ResponseEntity<GeneralErrorDto> handleUserAlreadyExistsException(
+            UserAlreadyExistsException ex) {
+
+        GeneralErrorDto apiError =
+                new GeneralErrorDto("Already exists", Collections.singletonList(ex.getMessage()));
+        return new ResponseEntity<>(
+                apiError, new HttpHeaders(), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({InvalidPasswordException.class})
+    public ResponseEntity<GeneralErrorDto> handleInvalidPasswordException(
+            InvalidPasswordException ex) {
+
+        GeneralErrorDto apiError =
+                new GeneralErrorDto("Invalid password", Collections.singletonList(ex.getMessage()));
+        return new ResponseEntity<>(
+                apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
 

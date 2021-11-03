@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,13 +16,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
     @Column(nullable = false)
-    private String name;
+    private String password;
 
     @Column(unique = true, nullable = false)
     private String email;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Account account;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    private Set<Role> roles;
 
 }

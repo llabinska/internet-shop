@@ -12,7 +12,10 @@ import javax.validation.constraints.NotBlank;
 public class UserRequestDto {
 
     @NotBlank(message = "{name.not.empty}")
-    private String name;
+    private String username;
+
+    @NotBlank(message = "{password.not.empty}")
+    private String password;
 
     @Email(message = "{email.not.valid}")
     @NotBlank(message = "{email.not.blank}")
