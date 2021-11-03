@@ -18,8 +18,7 @@ public class Product {
     @Column(nullable = false)
     private double price;
 
-    @Column(nullable = false)
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Category category;
 
 }

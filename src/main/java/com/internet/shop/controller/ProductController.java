@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RestController("/products")
+@RestController
+@RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -32,7 +33,7 @@ public class ProductController {
                                                            @RequestParam(value = "page", required = false, defaultValue = "0") int page,
                                                            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         Pageable paging = PageRequest.of(page, size);
-        return ResponseEntity.ok(productService.search(paging, productName, categoryName, minPrice, maxPrice));
+        return ResponseEntity.ok(productService.search(paging, categoryName, productName, minPrice, maxPrice));
     }
 
     @GetMapping("/{productId}")

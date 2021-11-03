@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
     private static final String CATEGORY_NOT_FOUND_ID_MSG = "Category with id = %s not found";
-    private static final String CATEGORY_NOT_FOUND_NAME_MSG = "Category with id = %s not found";
+    private static final String CATEGORY_NOT_FOUND_NAME_MSG = "Category with name = %s not found";
     public static final String CATEGORY_WITH_NAME_ALREADY_EXISTS_MSG = "Category with name=%s already exists!";
 
     private final CategoryRepository categoryRepository;
@@ -43,8 +43,14 @@ public class CategoryService {
     @Transactional
     public CategoryResponseDto update(Long id, CategoryRequestDto categoryRequestDto) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(CATEGORY_NOT_FOUND_ID_MSG, id)));
-        category.setName(categoryRequestDto.getName());
 
+        String name = categoryRequestDto.getName();
+        Category categoryByName = categoryRepository.getByName(name);
+        if (categoryByName != null) {
+            throw new CategoryAlreadyExistsException(String.format(CATEGORY_WITH_NAME_ALREADY_EXISTS_MSG, name));
+        }
+
+        category.setName(name);
         Category updatedCategory = categoryRepository.save(category);
         return toCategoryResponseDto(updatedCategory);
     }

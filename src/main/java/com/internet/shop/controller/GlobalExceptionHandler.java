@@ -54,7 +54,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         GeneralErrorDto apiError =
                 new GeneralErrorDto("Already exists", Collections.singletonList(ex.getMessage()));
         return new ResponseEntity<>(
-                apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
+                apiError, new HttpHeaders(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({CategoryNotFoundException.class})

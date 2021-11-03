@@ -71,7 +71,8 @@ public class ProductService {
         Category category = categoryService.getCategoryByName(productRequestDto.getCategory().getName());
         product.setCategory(category);
 
-        return toProductResponseDto(product);
+        Product createdProduct = productRepository.save(product);
+        return toProductResponseDto(createdProduct);
     }
 
     private ProductResponseDto toProductResponseDto(Product product) {
@@ -92,12 +93,12 @@ public class ProductService {
         return productRepository.findByCategory_NameAndPriceBetween(categoryName, minPrice, maxPrice, pageable).map(this::toProductResponseDto);
     }
 
-    private Page<ProductResponseDto> getByNameLikeAndPriceRange(Pageable pageable, String name, Double minPrice, Double maxPrice) throws CategoryNotFoundException {
-        return productRepository.findByNameLikeIgnoreCaseAndPriceBetween(name, minPrice, maxPrice, pageable).map(this::toProductResponseDto);
+    private Page<ProductResponseDto> getByNameLikeAndPriceRange(Pageable pageable, String productName, Double minPrice, Double maxPrice) throws CategoryNotFoundException {
+        return productRepository.findByNameContainingIgnoreCaseAndPriceBetween(productName, minPrice, maxPrice, pageable).map(this::toProductResponseDto);
     }
 
-    private Page<ProductResponseDto> getByNameLikeAndCategoryNameAndPriceRange(Pageable pageable, String name, String categoryName, Double minPrice, Double maxPrice) throws CategoryNotFoundException {
-        return productRepository.findByNameLikeIgnoreCaseAndCategory_NameAndPriceBetween(name, categoryName, minPrice, maxPrice, pageable).map(this::toProductResponseDto);
+    private Page<ProductResponseDto> getByNameLikeAndCategoryNameAndPriceRange(Pageable pageable, String productName, String categoryName, Double minPrice, Double maxPrice) throws CategoryNotFoundException {
+        return productRepository.findByNameContainingIgnoreCaseAndCategory_NameAndPriceBetween(productName, categoryName, minPrice, maxPrice, pageable).map(this::toProductResponseDto);
     }
 
 }

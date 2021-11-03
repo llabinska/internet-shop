@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@RestController("/categories")
+@RestController
+@RequestMapping("/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
