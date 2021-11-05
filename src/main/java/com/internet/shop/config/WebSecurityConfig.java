@@ -6,6 +6,7 @@ import com.internet.shop.security.RestAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,18 +23,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtFilter jwtFilter;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-    private final CustomUserDetailsService customUserDetails;
+    private final CustomUserDetailsService userDetailsService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
         authenticationManagerBuilder
-                .userDetailsService(customUserDetails)
+                .userDetailsService(userDetailsService)
                 .passwordEncoder(bCryptPasswordEncoder());
     }
 
@@ -41,8 +41,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 .authorizeRequests().antMatchers("/registration", "/login").permitAll()
-                .and()
-                .authorizeRequests().antMatchers("/users").hasRole("ADMIN")
+                .and().authorizeRequests().antMatchers(HttpMethod.GET, "/products/*", "/categories/**").authenticated()
+                .and().authorizeRequests().antMatchers("/users", "/users/*", "/products", "/products/*", "/categories", "/categories/*").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

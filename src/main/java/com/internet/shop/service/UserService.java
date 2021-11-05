@@ -73,7 +73,6 @@ public class UserService {
             account.setUser(user);
         }
 
-
         User createdUser = userRepository.save(user);
         return toUserResponseDto(createdUser);
     }

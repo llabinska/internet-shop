@@ -15,8 +15,7 @@ import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
-public class SetupDataLoader implements
-        ApplicationListener<ContextRefreshedEvent> {
+public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
     boolean alreadySetup = false;
 
