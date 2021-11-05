@@ -94,4 +94,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler({CommentNotFoundException.class})
+    public ResponseEntity<GeneralErrorDto> handleCommentNotFoundException(
+            CommentNotFoundException ex) {
+
+        GeneralErrorDto apiError =
+                new GeneralErrorDto("Not found", Collections.singletonList(ex.getMessage()));
+        return new ResponseEntity<>(
+                apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
 }

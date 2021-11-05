@@ -1,5 +1,6 @@
 package com.internet.shop.controller;
 
+import com.internet.shop.dto.comment.CommentResponseDto;
 import com.internet.shop.dto.product.ProductRequestDto;
 import com.internet.shop.dto.product.ProductResponseDto;
 import com.internet.shop.service.ProductService;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/products")
@@ -39,6 +41,11 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ProductResponseDto> getById(@PathVariable("productId") Long productId) {
         return ResponseEntity.ok(productService.getById(productId));
+    }
+
+    @GetMapping("/{productId}/comments")
+    public ResponseEntity<List<CommentResponseDto>> getComments(@PathVariable("productId") Long productId) {
+        return ResponseEntity.ok(productService.getById(productId).getComments());
     }
 
     @PutMapping("/{productId}")

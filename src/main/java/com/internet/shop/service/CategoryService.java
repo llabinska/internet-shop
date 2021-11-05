@@ -5,7 +5,7 @@ import com.internet.shop.dto.category.CategoryRequestDto;
 import com.internet.shop.dto.category.CategoryResponseDto;
 import com.internet.shop.exception.CategoryAlreadyExistsException;
 import com.internet.shop.exception.CategoryNotFoundException;
-import com.internet.shop.exception.UserNotFoundException;
+import com.internet.shop.mapper.CategoryConverter;
 import com.internet.shop.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +24,8 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private final CategoryConverter categoryConverter;
+
     @Transactional
     public CategoryResponseDto createIfNotExists(CategoryRequestDto categoryRequestDto) {
         String name = categoryRequestDto.getName();
@@ -37,12 +39,12 @@ public class CategoryService {
         category.setName(name);
 
         Category createdCategory = categoryRepository.save(category);
-        return toCategoryResponseDto(createdCategory);
+        return categoryConverter.toCategoryResponseDto(createdCategory);
     }
 
     @Transactional
     public CategoryResponseDto update(Long id, CategoryRequestDto categoryRequestDto) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND_ID_MSG, id)));
+        Category category = getCategoryById(id);
 
         String name = categoryRequestDto.getName();
         Category categoryByName = categoryRepository.getByName(name);
@@ -52,17 +54,18 @@ public class CategoryService {
 
         category.setName(name);
         Category updatedCategory = categoryRepository.save(category);
-        return toCategoryResponseDto(updatedCategory);
+        return categoryConverter.toCategoryResponseDto(updatedCategory);
     }
 
     @Transactional
     public void deleteById(Long id) {
+        getCategoryById(id);
         categoryRepository.deleteById(id);
     }
 
     public CategoryResponseDto getByName(String name) {
         Category category = getCategoryByName(name);
-        return toCategoryResponseDto(category);
+        return categoryConverter.toCategoryResponseDto(category);
     }
 
     Category getCategoryByName(String name) {
@@ -74,19 +77,16 @@ public class CategoryService {
     }
 
     public CategoryResponseDto getById(Long id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND_ID_MSG, id)));
-        return toCategoryResponseDto(category);
+        Category category = getCategoryById(id);
+        return categoryConverter.toCategoryResponseDto(category);
     }
 
     public Page<CategoryResponseDto> getAll(Pageable pageable) {
-        return categoryRepository.findAll(pageable).map(this::toCategoryResponseDto);
+        return categoryRepository.findAll(pageable).map(categoryConverter::toCategoryResponseDto);
     }
 
-    CategoryResponseDto toCategoryResponseDto(Category category) {
-        CategoryResponseDto categoryResponseDto = new CategoryResponseDto();
-        categoryResponseDto.setId(category.getId());
-        categoryResponseDto.setName(category.getName());
-        return categoryResponseDto;
+    private Category getCategoryById(Long id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(String.format(CATEGORY_NOT_FOUND_ID_MSG, id)));
     }
 
 }
