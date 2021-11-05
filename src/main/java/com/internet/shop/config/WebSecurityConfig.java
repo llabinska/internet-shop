@@ -41,8 +41,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()
                 .authorizeRequests().antMatchers("/registration", "/login").permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.GET, "/products/*", "/categories/**").authenticated()
-                .and().authorizeRequests().antMatchers("/users", "/users/*", "/products", "/products/*", "/categories", "/categories/*").hasRole("ADMIN")
+                .and().authorizeRequests().antMatchers(HttpMethod.GET, "/products/*", "/products/***", "/categories/**").authenticated()
+                .and().authorizeRequests().antMatchers(HttpMethod.POST, "/comments/product/*").authenticated()
+                .and().authorizeRequests().antMatchers("/users", "/users/*", "/products", "/products/*", "/categories", "/categories/*", "/comments/**").hasRole("ADMIN")
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

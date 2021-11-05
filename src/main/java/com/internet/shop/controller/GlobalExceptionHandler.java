@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<GeneralErrorDto> handleUserNotFoundException(
-            UserNotFoundException ex) {
+    @ExceptionHandler({NotFoundException.class})
+    public ResponseEntity<GeneralErrorDto> handleNotFoundException(
+            NotFoundException ex) {
 
         GeneralErrorDto apiError =
                 new GeneralErrorDto("Not found", Collections.singletonList(ex.getMessage()));
@@ -29,9 +29,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({UserAlreadyExistsException.class})
-    public ResponseEntity<GeneralErrorDto> handleUserAlreadyExistsException(
-            UserAlreadyExistsException ex) {
+    @ExceptionHandler({AlreadyExistsException.class})
+    public ResponseEntity<GeneralErrorDto> handleAlreadyExistsException(
+            AlreadyExistsException ex) {
 
         GeneralErrorDto apiError =
                 new GeneralErrorDto("Already exists", Collections.singletonList(ex.getMessage()));
@@ -49,7 +49,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
-
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -62,36 +61,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 new GeneralErrorDto("Validation failed", errors);
         return new ResponseEntity<>(
                 apiError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler({CategoryAlreadyExistsException.class})
-    public ResponseEntity<GeneralErrorDto> handleCategoryAlreadyExistsException(
-            CategoryAlreadyExistsException ex) {
-
-        GeneralErrorDto apiError =
-                new GeneralErrorDto("Already exists", Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(
-                apiError, new HttpHeaders(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler({CategoryNotFoundException.class})
-    public ResponseEntity<GeneralErrorDto> handleCategoryNotFoundException(
-            CategoryNotFoundException ex) {
-
-        GeneralErrorDto apiError =
-                new GeneralErrorDto("Not found", Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(
-                apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler({ProductNotFoundException.class})
-    public ResponseEntity<GeneralErrorDto> handleProductNotFoundException(
-            ProductNotFoundException ex) {
-
-        GeneralErrorDto apiError =
-                new GeneralErrorDto("Not found", Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(
-                apiError, new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
 }

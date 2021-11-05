@@ -4,12 +4,12 @@ package com.internet.shop.service;
 import com.internet.shop.dmo.Account;
 import com.internet.shop.dmo.Role;
 import com.internet.shop.dmo.User;
-import com.internet.shop.dto.account.AccountResponseDto;
 import com.internet.shop.dto.user.UserRequestDto;
 import com.internet.shop.dto.user.UserResponseDto;
 import com.internet.shop.exception.InvalidPasswordException;
 import com.internet.shop.exception.UserAlreadyExistsException;
 import com.internet.shop.exception.UserNotFoundException;
+import com.internet.shop.mapper.UserConverter;
 import com.internet.shop.repository.RoleRepository;
 import com.internet.shop.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,20 +35,27 @@ public class UserService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserResponseDto findByLoginAndPassword(String username, String password) {
+    private final UserConverter userConverter;
+
+    public UserResponseDto findByUsernameAndPassword(String username, String password) {
+        User user = findByUsername(username);
+
+        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException("The password is invalid!");
+        }
+
+        return userConverter.toUserResponseDto(user);
+    }
+
+    User findByUsername(String username) {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
             throw new UsernameNotFoundException("User with username = [" + username + "] not found");
         }
 
-        if (!bCryptPasswordEncoder.matches(password, user.getPassword())) {
-            throw new InvalidPasswordException("The password is invalid!");
-        }
-
-        return toUserResponseDto(user);
+        return user;
     }
-
 
     @Transactional
     public UserResponseDto create(UserRequestDto userRequestDto) {
@@ -74,12 +81,12 @@ public class UserService {
         }
 
         User createdUser = userRepository.save(user);
-        return toUserResponseDto(createdUser);
+        return userConverter.toUserResponseDto(createdUser);
     }
 
     @Transactional
     public UserResponseDto update(Long id, UserRequestDto userRequestDto) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
+        User user = getUserById(id);
         user.setEmail(userRequestDto.getEmail());
         user.setUsername(userRequestDto.getUsername());
 
@@ -89,39 +96,26 @@ public class UserService {
         }
 
         User updatedUser = userRepository.save(user);
-        return toUserResponseDto(updatedUser);
+        return userConverter.toUserResponseDto(updatedUser);
     }
 
-    public UserResponseDto get(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
-        return toUserResponseDto(user);
+    public UserResponseDto getById(Long id) {
+        User user = getUserById(id);
+        return userConverter.toUserResponseDto(user);
     }
 
     public Page<UserResponseDto> getAll(Pageable pageable) {
-        return userRepository.findAll(pageable).map(this::toUserResponseDto);
+        return userRepository.findAll(pageable).map(userConverter::toUserResponseDto);
     }
 
     @Transactional
     public void deleteById(Long userId) {
+        getUserById(userId);
         userRepository.deleteById(userId);
     }
 
-
-    private UserResponseDto toUserResponseDto(User user) {
-        UserResponseDto userResponseDto = new UserResponseDto();
-        userResponseDto.setId(user.getId());
-        if (user.getAccount() != null) {
-            userResponseDto.setAccount(toAccountResponseDto(user.getAccount()));
-        }
-        userResponseDto.setEmail(user.getEmail());
-        userResponseDto.setUserName(user.getUsername());
-        return userResponseDto;
+    User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format(USER_NOT_FOUND_MSG, id)));
     }
 
-    private AccountResponseDto toAccountResponseDto(Account account) {
-        AccountResponseDto accountResponseDto = new AccountResponseDto();
-        accountResponseDto.setId(account.getId());
-        accountResponseDto.setAmount(account.getAmount());
-        return accountResponseDto;
-    }
 }
